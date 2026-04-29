@@ -1,4 +1,4 @@
-package com.teach.api.toDo.model;
+package com.teach.api.toDo.domain;
 
 public enum StatusTask {
     PENDENTE,

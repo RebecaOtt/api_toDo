@@ -1,5 +1,6 @@
 package com.teach.api.toDo.model;
 
+import com.teach.api.toDo.domain.StatusTask;
 import jakarta.persistence.*;
 
 @Entity
