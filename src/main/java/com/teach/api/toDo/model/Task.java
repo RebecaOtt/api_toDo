@@ -20,6 +20,15 @@ public class Task {
     @JoinColumn(name = "user_id")
     private User user;
 
+    public Task() {
+    }
+
+    public Task(String title, String description, StatusTask status) {
+        this.title = title;
+        this.description = description;
+        this.status = status;
+    }
+
     public Long getId() {
         return id;
     }

@@ -40,7 +40,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
 
-                        .requestMatchers(HttpMethod.GET, "/task").hasAuthority(Role.USER.name())
+                        .requestMatchers(HttpMethod.GET, "/tasks").hasAuthority(Role.USER.name())
+                        .requestMatchers(HttpMethod.GET, "/tasks/{id}").hasAuthority(Role.USER.name())
 
                         .anyRequest().authenticated() //qualquer outra requisicao exige login
                 )

@@ -1,17 +1,18 @@
 package com.teach.api.toDo.controller;
 
 import com.teach.api.toDo.domain.StatusTask;
+import com.teach.api.toDo.dto.req.TaskPatchDTOReq;
+import com.teach.api.toDo.dto.req.TasksDTOReq;
 import com.teach.api.toDo.dto.res.TasksDTORes;
 import com.teach.api.toDo.model.User;
 import com.teach.api.toDo.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -23,18 +24,37 @@ public class TaskController {
 
     @GetMapping
     public ResponseEntity<List<TasksDTORes>> findAllTask(@RequestParam(required = false) StatusTask statusTask,
-    @AuthenticationPrincipal User user){
-        List<TasksDTORes> list = this.taskService.findAllTask(user.getId(), statusTask);
+    @AuthenticationPrincipal User userId){
+        List<TasksDTORes> list = this.taskService.findAllTask(userId.getId(), statusTask);
         return ResponseEntity.ok(list);
     }
 
-    @GetMapping("/user")
-    public String user(){
-        return "user";
+    @GetMapping("/{id}")
+    public ResponseEntity<TasksDTORes> findById(@PathVariable("id") Long id,
+    @AuthenticationPrincipal User userId){
+        TasksDTORes tasksModel = this.taskService.findById(userId.getId(), id);
+        return ResponseEntity.ok(tasksModel);
     }
 
-    @GetMapping("/admin")
-    public String admin(){
-        return "admin";
+    @PostMapping
+    public ResponseEntity<TasksDTORes> create(@RequestBody TasksDTOReq tasksDTOReq, UriComponentsBuilder uriComponentsBuilder, @AuthenticationPrincipal User userId) {
+        TasksDTORes newTask = this.taskService.create(userId.getId(), tasksDTOReq);
+        URI uri = uriComponentsBuilder.path("/tasks/{id}").buildAndExpand(newTask.id()
+        ).toUri();
+
+        return ResponseEntity.created(uri).body(newTask);
     }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<TasksDTORes> updateStatusOrDescription(@PathVariable("id") Long id, @RequestBody TaskPatchDTOReq taskPatchDTOReq, @AuthenticationPrincipal User userId){
+        TasksDTORes tasksModel = this.taskService.updateStatusOrDescription(id, taskPatchDTOReq, userId.getId());
+        return ResponseEntity.ok(tasksModel);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleted(@PathVariable("id") Long id, @AuthenticationPrincipal User userId) {
+        this.taskService.deleted(id, userId.getId());
+        return ResponseEntity.noContent().build();
+    }
+
 }
