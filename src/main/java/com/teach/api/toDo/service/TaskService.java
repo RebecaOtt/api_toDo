@@ -4,6 +4,8 @@ import com.teach.api.toDo.domain.StatusTask;
 import com.teach.api.toDo.dto.req.TaskPatchDTOReq;
 import com.teach.api.toDo.dto.req.TasksDTOReq;
 import com.teach.api.toDo.dto.res.TasksDTORes;
+import com.teach.api.toDo.exception.ResourceNotFoundException;
+import com.teach.api.toDo.exception.UnauthorizedAccessException;
 import com.teach.api.toDo.model.Task;
 import com.teach.api.toDo.model.User;
 import com.teach.api.toDo.repository.TaskRepository;
@@ -40,30 +42,6 @@ public class TaskService {
         return TasksDTORes.ModelToDTO(taskModel);
     }
 
-    private User findByIdEntity(Long id){
-        try {
-            return this.userRepository.findById(id).orElseThrow(()->
-                    new ClassNotFoundException("User not found!!"));
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private Task findTaskByIdEntity(Long id) {
-        try {
-            return this.taskRepository.findById(id).orElseThrow(()->
-                    new ClassNotFoundException("Task not found!!"));
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void validatedUser(Task task, Long userId) {
-        if (!task.getUser().getId().equals(userId)){
-            throw new RuntimeException("task not found");
-        }
-    }
-
     public TasksDTORes create(Long userId, TasksDTOReq tasksDTOReq) {
         User user = this.findByIdEntity(userId);
 
@@ -93,5 +71,20 @@ public class TaskService {
         Task task = this.findTaskByIdEntity(id);
         this.validatedUser(task, userId);
         this.taskRepository.delete(task);
+    }
+
+    private User findByIdEntity(Long id){
+        return this.userRepository.findById(id).orElseThrow(()-> new ResourceNotFoundException("User not found!!"));
+    }
+
+    private Task findTaskByIdEntity(Long id) {
+            return this.taskRepository.findById(id).orElseThrow(()->
+                    new ResourceNotFoundException("Task not found!!"));
+    }
+
+    private void validatedUser(Task task, Long userId) {
+        if (!task.getUser().getId().equals(userId)){
+            throw new UnauthorizedAccessException("You don't have permission to access this task.");
+        }
     }
 }

@@ -5,6 +5,9 @@ import com.teach.api.toDo.dto.req.LoginReqDTO;
 import com.teach.api.toDo.dto.req.UserReqDTO;
 import com.teach.api.toDo.dto.res.LoginResDTO;
 import com.teach.api.toDo.dto.res.UserResDTO;
+import com.teach.api.toDo.exception.InvalidParamException;
+import com.teach.api.toDo.exception.ResourceAlreadyExistsException;
+import com.teach.api.toDo.exception.ResourceNotFoundException;
 import com.teach.api.toDo.model.User;
 import com.teach.api.toDo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +36,7 @@ public class UserService {
     public UserResDTO createUser(UserReqDTO dto) {
         validate(dto.username(), dto.password());
         if (userRepository.existsByUsername(dto.username()))
-            throw new RuntimeException("Username already in use");
+            throw new ResourceAlreadyExistsException("Username already in use");
 
         User user = new User();
 
@@ -56,7 +59,7 @@ public class UserService {
         Optional<User> optionalUser = userRepository.findByUsername(dto.username());
 
         if (optionalUser.isEmpty())
-            throw new RuntimeException("User not found");
+            throw new ResourceNotFoundException("User not found");
 
         User user = optionalUser.get();
 
@@ -74,12 +77,12 @@ public class UserService {
 
     public void validate(String username, String password) {
         if (username == null)
-            throw  new RuntimeException("Username cannot be null");
+            throw  new InvalidParamException("Username cannot be null");
         if (password == null)
-            throw new RuntimeException("Password cannot be null");
+            throw new InvalidParamException("Password cannot be null");
         if (username.isEmpty())
-            throw  new RuntimeException("Username cannot be empty");
+            throw  new InvalidParamException("Username cannot be empty");
         if (password.isEmpty())
-            throw new RuntimeException("Password cannot be empty");
+            throw new InvalidParamException("Password cannot be empty");
     }
 }
