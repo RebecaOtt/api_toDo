@@ -24,11 +24,6 @@ public class SecurityConfig {
     @Autowired
     private SecurityFilter securityFilter;
 
-    /*antes de chegar no controller, ele vai passar nessa classe
-    .csrf(csrf -> csrf.disable()) desabilitada, porque cada usuario criará sua senha
-    sm.sessionCreationPolicy()) é como vou armazenar a secão
-    SessionCreationPolicy.STATELESS é que nada vai ficar armazenado da secão do user
-     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity security) throws Exception {
         return security
@@ -43,7 +38,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/tasks").hasAuthority(Role.USER.name())
                         .requestMatchers(HttpMethod.GET, "/tasks/{id}").hasAuthority(Role.USER.name())
 
-                        .anyRequest().authenticated() //qualquer outra requisicao exige login
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

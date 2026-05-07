@@ -40,7 +40,6 @@ public class UserService {
 
         User user = new User();
 
-        //precisa criptografar a senha
         user.setUsername(dto.username());
 
         String encondedPassword = passwordEncoder.encode(dto.password());
@@ -55,7 +54,6 @@ public class UserService {
 
     public LoginResDTO login(LoginReqDTO dto) {
         validate(dto.username(), dto.password());
-        //uma vez que o usuario passou a senha, vai ao bd ver se está la seu login
         Optional<User> optionalUser = userRepository.findByUsername(dto.username());
 
         if (optionalUser.isEmpty())
@@ -63,12 +61,6 @@ public class UserService {
 
         User user = optionalUser.get();
 
-//        //vendo se a senha é a mesma que a criada, 1-> descriptografada, 2-> criptografada
-//        boolean validPassword = passwordEncoder.matches(dto.password(), user.getPassword());
-//        if (!validPassword)
-//            throw new RuntimeException("Invalid password");
-
-        //usando o AuthenticationManager
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(dto.username(), dto.password());
         authenticationManager.authenticate(token);
 

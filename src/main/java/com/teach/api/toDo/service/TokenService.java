@@ -22,10 +22,10 @@ public class TokenService {
         Instant expirationDate = getExpirationDate();
 
         String token = JWT.create()
-                .withIssuer("3035teach/apiToDo") //o nome da aplicação, que queremos dar
-                .withSubject(user.getUsername()) //o que vai assinar ser o usuario, ou seja o username
-                .withExpiresAt(expirationDate) //a data que acaba
-                .sign(algorithm); //e a assinatura criada por algoritmo
+                .withIssuer("3035teach/apiToDo")
+                .withSubject(user.getUsername())
+                .withExpiresAt(expirationDate)
+                .sign(algorithm);
 
         return new LoginResDTO(
                 "Bearer",

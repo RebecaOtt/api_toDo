@@ -21,12 +21,10 @@ public class UserController {
     public UserResDTO createUser(
             @RequestBody UserReqDTO dto
     ){
-        //Criar um usuario, chamo o service
         UserResDTO response = userService.createUser(dto);
         return response;
     }
 
-    //vai ser chamada quando na uri for "localhost:8080//..../auth/login
     @PostMapping("/login")
     public LoginResDTO login(
             @RequestBody LoginReqDTO dto

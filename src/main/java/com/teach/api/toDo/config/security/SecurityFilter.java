@@ -1,5 +1,6 @@
 package com.teach.api.toDo.config.security;
 
+import com.teach.api.toDo.exception.ResourceNotFoundException;
 import com.teach.api.toDo.model.User;
 import com.teach.api.toDo.repository.UserRepository;
 import com.teach.api.toDo.service.TokenService;
@@ -35,7 +36,7 @@ public class SecurityFilter extends OncePerRequestFilter {
             Optional<User> userOptional = userRepository.findByUsername(username);
 
             if (userOptional.isEmpty())
-                throw new RuntimeException("User not found");
+                throw new ResourceNotFoundException("User not found");
 
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                     userOptional.get(), null, userOptional.get().getAuthorities()
